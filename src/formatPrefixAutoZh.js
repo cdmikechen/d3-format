@@ -1,0 +1,19 @@
+import formatDecimal from "./formatDecimal";
+
+export var prefixExponentZh;
+
+export default function(x, p) {
+  var d = formatDecimal(x, p);
+  if (!d) return x + "";
+  var coefficient = d[0],
+      exponent = d[1],
+      i = exponent - (prefixExponentZh = exponent < 0
+              ? Math.max(-8, Math.min(8, Math.floor(exponent / 3))) * 3
+              : Math.max(-8, Math.min(8, Math.floor(exponent / 4))) * 4
+      ) + 1,
+      n = coefficient.length;
+  return i === n ? coefficient
+      : i > n ? coefficient + new Array(i - n + 1).join("0")
+      : i > 0 ? coefficient.slice(0, i) + "." + coefficient.slice(i)
+      : "0." + new Array(1 - i).join("0") + formatDecimal(x, Math.max(0, p + i - 1))[0]; // less than 1y!
+}

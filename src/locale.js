@@ -5,9 +5,11 @@ import formatSpecifier from "./formatSpecifier";
 import formatTrim from "./formatTrim";
 import formatTypes from "./formatTypes";
 import {prefixExponent} from "./formatPrefixAuto";
+import {prefixExponentZh} from "./formatPrefixAutoZh.js";
 import identity from "./identity";
 
 var prefixes = ["y","z","a","f","p","n","µ","m","","k","M","G","T","P","E","Z","Y"];
+var prefixesZh = ["y","z","a","f","p","n","µ","m","","万","亿","兆","京","垓","秭","穰","沟"];
 
 export default function(locale) {
   var group = locale.grouping && locale.thousands ? formatGroup(locale.grouping, locale.thousands) : identity,
@@ -81,7 +83,16 @@ export default function(locale) {
 
         // Compute the prefix and suffix.
         valuePrefix = (valueNegative ? (sign === "(" ? sign : "-") : sign === "-" || sign === "(" ? "" : sign) + valuePrefix;
-        valueSuffix = (type === "s" ? prefixes[8 + prefixExponent / 3] : "") + valueSuffix + (valueNegative && sign === "(" ? ")" : "");
+        //-- valueSuffix = (type === "s" ? prefixes[8 + prefixExponent / 3] : "") + valueSuffix + (valueNegative && sign === "(" ? ")" : "");
+        if (type === "s") {
+            valueSuffix = prefixes[8 + prefixExponent / 3] + valueSuffix + (valueNegative && sign === "(" ? ")" : "");
+        } else if (type === "z" && prefixExponentZh >= 0) {
+            valueSuffix = prefixesZh[8 + prefixExponentZh / 4] + valueSuffix + (valueNegative && sign === "(" ? ")" : "");
+        } else if (type === "z" && prefixExponentZh < 0) {
+            valueSuffix = prefixes[8 + prefixExponentZh / 3] + valueSuffix + (valueNegative && sign === "(" ? ")" : "");
+        } else {
+            valueSuffix = "" + valueSuffix + (valueNegative && sign === "(" ? ")" : "");
+        }
 
         // Break the formatted value into the integer “value” part that can be
         // grouped, and fractional or exponential “suffix” part that is not.

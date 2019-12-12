@@ -1,4 +1,5 @@
 import formatPrefixAuto from "./formatPrefixAuto";
+import formatPrefixAutoZh from "./formatPrefixAutoZh.js";
 import formatRounded from "./formatRounded";
 
 export default {
@@ -13,6 +14,7 @@ export default {
   "p": function(x, p) { return formatRounded(x * 100, p); },
   "r": formatRounded,
   "s": formatPrefixAuto,
+  "z": formatPrefixAutoZh,
   "X": function(x) { return Math.round(x).toString(16).toUpperCase(); },
   "x": function(x) { return Math.round(x).toString(16); }
 };
